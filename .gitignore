@@ -69,3 +69,11 @@ logs/
 
 # AI scratch (generated, not tracked)
 .ai/scratch/
+
+# Planning (draft, not tracked yet)
+.ai/planning/prd/PLANNING.md
+
+# Stack runtime data
+stack/models/
+stack/data/*
+!stack/data/.gitkeep

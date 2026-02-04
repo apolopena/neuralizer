@@ -1,0 +1,7 @@
+# Dev overrides: exposes ports to host for debugging/testing
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+services:
+  backend:
+    ports:
+      - "${BACKEND_HOST_PORT:-8000}:8000"

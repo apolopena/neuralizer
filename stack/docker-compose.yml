@@ -1,0 +1,70 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file:
+      - .env
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - app_network
+
+  backend:
+    build: ./backend
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - ./data:/data
+    networks:
+      - app_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: neuralizer-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - app_network
+
+  frontend:
+    build: ./frontend
+    env_file:
+      - .env
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/vite.config.js:/app/vite.config.js:ro
+    command: npm run dev
+    networks:
+      - app_network
+
+volumes:
+  caddy_data:
+  caddy_config:
+  redis_data:
+
+networks:
+  app_network:
+    driver: bridge
