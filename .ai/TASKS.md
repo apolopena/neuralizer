@@ -13,6 +13,15 @@
 
 ## Done
 <!-- DONE_START -->
+- [x] BOOTSTRAP-5: Agent Framework + Neuralizer Detection (2026-02-04)
+  - Agent framework ported from catalytic-customer: BaseAgent ABC, BaseClient ABC, AgentActivityMonitor, AgentEvent model
+  - Neuralizer agent classifies prompts for PII, credentials, log files, code secrets, infrastructure via local LLM
+  - LlamaCppClient with configurable `LLM_TIMEOUT` env var, MockThinkingClient for testing JSON parse errors
+  - Detection system prompt with few-shot examples, false-positive tuning for container/CLI output
+  - Prompt builders in `services/prompts/neuralizer.py` (detect prompt, panel response, status response)
+  - Human-readable error reporting: timeout, connection, JSON parse errors with actionable guidance
+  - Test endpoint `/v1/test/think-error` for deterministic error scenario testing
+  - Env vars: `LLM_MODEL` (switchable thinking/instruct), `LLM_TIMEOUT`, both models in `.env.example`
 - [x] BOOTSTRAP-4: Open WebUI + Prompt Interception Proxy (2026-02-04)
   - Open WebUI service with telemetry disabled, Caddy dedicated port (8082) for iframe embedding
   - Prompt proxy (`/v1/chat/completions`) intercepts prompts, publishes to Redis, blocks LLM forwarding

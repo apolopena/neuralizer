@@ -60,7 +60,7 @@ services:
     container_name: neuralizer-llm
     restart: unless-stopped
     command: >
-      -m /models/qwen3-4b-thinking-2507-q8_0.gguf
+      -m /models/${LLM_MODEL:-qwen3-4b-instruct-2507-q8_0.gguf}
       -c ${LLM_CONTEXT_SIZE:-32768}
       -ngl 99
       --host 0.0.0.0
@@ -84,7 +84,7 @@ services:
       - app_network
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:main
+    image: ghcr.io/open-webui/open-webui:v0.7.2
     container_name: neuralizer-open-webui
     restart: unless-stopped
     environment:
@@ -101,6 +101,9 @@ services:
       - DO_NOT_TRACK=true
       - SCARF_NO_ANALYTICS=true
       - ANONYMIZED_TELEMETRY=false
+      - SHOW_ADMIN_DETAILS=false
+      - ENABLE_CHANGELOG_NOTIFICATIONS=false
+      - OFFLINE_MODE=true
     volumes:
       - openwebui_data:/app/backend/data
     depends_on:

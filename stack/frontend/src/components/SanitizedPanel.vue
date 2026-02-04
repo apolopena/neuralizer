@@ -14,8 +14,16 @@
         :key="index"
         class="rounded-lg bg-gray-900 border border-gray-800 p-3"
       >
-        <p class="text-sm text-gray-200 whitespace-pre-wrap">{{ entry.prompt }}</p>
-        <p class="mt-1 text-xs text-yellow-500">{{ entry.status }}</p>
+        <p class="text-sm text-gray-400 whitespace-pre-wrap">{{ entry.prompt }}</p>
+        <p v-if="entry.sanitized" class="mt-2 text-sm text-gray-200 whitespace-pre-wrap">{{ entry.sanitized }}</p>
+        <p
+          class="mt-1 text-xs"
+          :class="{
+            'text-yellow-500 animate-pulse': entry.status === 'Processing...',
+            'text-red-500': entry.status === 'Error',
+            'text-green-500': entry.status !== 'Processing...' && entry.status !== 'Error',
+          }"
+        >{{ entry.status }}</p>
       </div>
     </div>
   </div>
@@ -35,7 +43,15 @@ function connect() {
   ws.onmessage = (event) => {
     try {
       const data = JSON.parse(event.data);
-      prompts.value.push(data);
+      // Update existing entry if same prompt is being processed
+      const existing = prompts.value.findLastIndex(
+        (p) => p.prompt === data.prompt && p.status === "Processing..."
+      );
+      if (existing !== -1 && data.status !== "Processing...") {
+        prompts.value[existing] = data;
+      } else {
+        prompts.value.push(data);
+      }
     } catch {
       // ignore malformed messages
     }
