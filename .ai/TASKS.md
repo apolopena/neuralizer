@@ -17,7 +17,7 @@
   - llama.cpp server-cuda container serving Qwen3-4B GGUF with GPU offload, configurable context window
   - Env vars `LLM_IMAGE` and `LLM_CONTEXT_SIZE` for GPU backend and context size switching
   - Health endpoint reports Redis + LLM dependency status (`ok`/`degraded`/`unavailable`)
-  - Consistent `neuralizer-` container naming, curl added to backend image for cross-container testing
+  - Consistent `neuralizer-` container naming, curl in backend image, `scripts/llm/smoke-test.sh` with spinner
 - [x] BOOTSTRAP-2: Stack Scaffolding (2026-02-04)
   - Docker Compose with Caddy, FastAPI backend, Vue 3 frontend, Redis (7-alpine, AOF, healthcheck)
   - Backend: uvicorn + wsproto WebSocket, Redis lifespan, health endpoint; Frontend: Vue 3 + Tailwind 4 + Vite 7
