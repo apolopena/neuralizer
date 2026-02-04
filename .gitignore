@@ -74,6 +74,7 @@ logs/
 .ai/planning/prd/PLANNING.md
 
 # Stack runtime data
-stack/models/
+stack/models/*
+!stack/models/.gitkeep
 stack/data/*
 !stack/data/.gitkeep
