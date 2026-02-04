@@ -5,6 +5,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "8082:8082"
     env_file:
       - .env
     volumes:
@@ -82,6 +83,31 @@ services:
     networks:
       - app_network
 
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: neuralizer-open-webui
+    restart: unless-stopped
+    environment:
+      - PORT=8081
+      - OPENAI_API_BASE_URL=http://backend:8000/v1
+      - OPENAI_API_KEY=not-needed
+      - ENABLE_OLLAMA_API=false
+      - WEBUI_AUTH=false
+      - ENABLE_AUTOCOMPLETE_GENERATION=false
+      - ENABLE_FOLLOW_UP_GENERATION=false
+      - ENABLE_TAGS_GENERATION=false
+      - ENABLE_SEARCH_QUERY_GENERATION=false
+      - ENABLE_TITLE_GENERATION=false
+      - DO_NOT_TRACK=true
+      - SCARF_NO_ANALYTICS=true
+      - ANONYMIZED_TELEMETRY=false
+    volumes:
+      - openwebui_data:/app/backend/data
+    depends_on:
+      - backend
+    networks:
+      - app_network
+
   frontend:
     container_name: neuralizer-frontend
     build: ./frontend
@@ -96,9 +122,15 @@ services:
 
 volumes:
   caddy_data:
+    name: neuralizer-caddy-data
   caddy_config:
+    name: neuralizer-caddy-config
   redis_data:
+    name: neuralizer-redis-data
+  openwebui_data:
+    name: neuralizer-openwebui-data
 
 networks:
   app_network:
+    name: neuralizer-network
     driver: bridge

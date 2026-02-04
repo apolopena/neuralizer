@@ -13,6 +13,11 @@
 
 ## Done
 <!-- DONE_START -->
+- [x] BOOTSTRAP-4: Open WebUI + Prompt Interception Proxy (2026-02-04)
+  - Open WebUI service with telemetry disabled, Caddy dedicated port (8082) for iframe embedding
+  - Prompt proxy (`/v1/chat/completions`) intercepts prompts, publishes to Redis, blocks LLM forwarding
+  - WebSocket `/ws/prompts` streams intercepted prompts to frontend via Redis pub/sub
+  - Split-pane Vue layout: SanitizedPanel (left, real-time prompts) + ChatPanel (right, Open WebUI iframe)
 - [x] BOOTSTRAP-3: LLM Inference Service (2026-02-04)
   - llama.cpp server-cuda container serving Qwen3-4B GGUF with GPU offload, configurable context window
   - Env vars `LLM_IMAGE` and `LLM_CONTEXT_SIZE` for GPU backend and context size switching

@@ -9,6 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from redis.asyncio import Redis
 
 from routes.health import router as health_router
+from routes.inference import router as inference_router
+from websockets.prompt_stream import prompt_stream
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -52,3 +54,5 @@ app.add_middleware(
 )
 
 app.include_router(health_router)
+app.include_router(inference_router)
+app.websocket("/ws/prompts")(prompt_stream)
