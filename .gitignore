@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+*.whl
+.venv/
+venv/
+env/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+*.cover
+
+# Vue / Node
+node_modules/
+dist/
+.output/
+.nuxt/
+*.local
+.env*.local
+
+# Vite
+*.sw?
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS - macOS
+.DS_Store
+
+# OS - Windows / WSL
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# WSL metadata
+*.Zone.Identifier
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+*.log
+logs/
+
+# AI scratch (generated, not tracked)
+.ai/scratch/
