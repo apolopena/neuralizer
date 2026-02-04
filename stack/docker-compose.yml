@@ -1,5 +1,6 @@
 services:
   caddy:
+    container_name: neuralizer-caddy
     image: caddy:2-alpine
     ports:
       - "80:80"
@@ -14,14 +15,18 @@ services:
       - app_network
 
   backend:
+    container_name: neuralizer-backend
     build: ./backend
     env_file:
       - .env
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - LLM_BASE_URL=http://llm:8080
     depends_on:
       redis:
+        condition: service_healthy
+      llm:
         condition: service_healthy
     volumes:
       - ./backend:/app
@@ -49,7 +54,36 @@ services:
     networks:
       - app_network
 
+  llm:
+    image: ${LLM_IMAGE:-ghcr.io/ggml-org/llama.cpp:server-cuda}
+    container_name: neuralizer-llm
+    restart: unless-stopped
+    command: >
+      -m /models/qwen3-4b-thinking-2507-q8_0.gguf
+      -c ${LLM_CONTEXT_SIZE:-32768}
+      -ngl 99
+      --host 0.0.0.0
+      --port 8080
+    volumes:
+      - ./models:/models:ro
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - app_network
+
   frontend:
+    container_name: neuralizer-frontend
     build: ./frontend
     env_file:
       - .env
