@@ -1,0 +1,11 @@
+# Dev overrides: exposes ports to host for debugging/testing
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+services:
+  backend:
+    ports:
+      - "${BACKEND_HOST_PORT:-8000}:8000"
+
+  open-webui:
+    ports:
+      - "${OPENWEBUI_HOST_PORT:-8081}:8081"

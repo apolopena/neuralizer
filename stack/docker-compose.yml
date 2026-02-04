@@ -1,0 +1,139 @@
+services:
+  caddy:
+    container_name: neuralizer-caddy
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8082:8082"
+    env_file:
+      - .env
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - app_network
+
+  backend:
+    container_name: neuralizer-backend
+    build: ./backend
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - LLM_BASE_URL=http://llm:8080
+    depends_on:
+      redis:
+        condition: service_healthy
+      llm:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - ./data:/data
+    networks:
+      - app_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: neuralizer-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - app_network
+
+  llm:
+    image: ${LLM_IMAGE:-ghcr.io/ggml-org/llama.cpp:server-cuda}
+    container_name: neuralizer-llm
+    restart: unless-stopped
+    command: >
+      -m /models/${LLM_MODEL:-qwen3-4b-instruct-2507-q8_0.gguf}
+      -c ${LLM_CONTEXT_SIZE:-32768}
+      -ngl 99
+      --host 0.0.0.0
+      --port 8080
+    volumes:
+      - ./models:/models:ro
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - app_network
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:v0.7.2
+    container_name: neuralizer-open-webui
+    restart: unless-stopped
+    environment:
+      - PORT=8081
+      - OPENAI_API_BASE_URL=http://backend:8000/v1
+      - OPENAI_API_KEY=not-needed
+      - ENABLE_OLLAMA_API=false
+      - WEBUI_AUTH=false
+      - ENABLE_AUTOCOMPLETE_GENERATION=false
+      - ENABLE_FOLLOW_UP_GENERATION=false
+      - ENABLE_TAGS_GENERATION=false
+      - ENABLE_SEARCH_QUERY_GENERATION=false
+      - ENABLE_TITLE_GENERATION=false
+      - DO_NOT_TRACK=true
+      - SCARF_NO_ANALYTICS=true
+      - ANONYMIZED_TELEMETRY=false
+      - SHOW_ADMIN_DETAILS=false
+      - ENABLE_CHANGELOG_NOTIFICATIONS=false
+      - OFFLINE_MODE=true
+    volumes:
+      - openwebui_data:/app/backend/data
+    depends_on:
+      - backend
+    networks:
+      - app_network
+
+  frontend:
+    container_name: neuralizer-frontend
+    build: ./frontend
+    env_file:
+      - .env
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/vite.config.js:/app/vite.config.js:ro
+    command: npm run dev
+    networks:
+      - app_network
+
+volumes:
+  caddy_data:
+    name: neuralizer-caddy-data
+  caddy_config:
+    name: neuralizer-caddy-config
+  redis_data:
+    name: neuralizer-redis-data
+  openwebui_data:
+    name: neuralizer-openwebui-data
+
+networks:
+  app_network:
+    name: neuralizer-network
+    driver: bridge

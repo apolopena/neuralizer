@@ -1,0 +1,31 @@
+localhost {
+    # Backend health check
+    handle /health {
+        reverse_proxy backend:8000
+    }
+
+    # OpenAI-compatible proxy (used by Open WebUI)
+    handle /v1/* {
+        reverse_proxy backend:8000
+    }
+
+    # WebSocket for prompt stream
+    handle /ws/* {
+        reverse_proxy backend:8000
+    }
+
+    # Backend API
+    handle /api/* {
+        reverse_proxy backend:8000
+    }
+
+    # Frontend (catch-all)
+    handle /* {
+        reverse_proxy frontend:3000
+    }
+}
+
+# Open WebUI on dedicated port (iframe-friendly, no path conflicts)
+localhost:8082 {
+    reverse_proxy open-webui:8081
+}

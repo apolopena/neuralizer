@@ -24,8 +24,7 @@ Mark gathers context and dispatches .github/workflows/gh-dispatch-ai.yml with pr
 When using `/generate-prp` or `/execute-prp`, read `.ai/AGENTS.md` for complete planning workflow directives.
 
 ### Real-Time Updates
-Two WebSocket composables exist for different purposes:
-- `useAdminWebSocket.js` - Admin dashboard updates (user events, session changes)
+WebSocket composables exist for different purposes:
 - `useAgentWebSocket.js` - Agent activity streaming (inference events, errors)
 
 Use the appropriate composable for your feature. Don't create new WebSocket connections unless adding a genuinely new real-time data source.
