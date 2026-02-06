@@ -39,7 +39,7 @@ Use `uv` for all Python work. A `.venv` should exist at repo root — if missing
 See `docs/unit-tests.md` for complete setup. Quick reference:
 ```bash
 cd backend/tests && uv pip install -r requirements.txt  # Install/update deps
-cd backend && uv run ruff check . && uv run ruff format .  # Lint
+uv tool run ruff check stack/backend && uv tool run ruff format stack/backend  # Lint
 ./scripts/run-tests.sh -m  # Run main backend tests
 ```
 
