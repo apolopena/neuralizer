@@ -37,10 +37,16 @@ curl -L -o stack/models/qwen3-4b-instruct-2507-q8_0.gguf \
 ## Configure Environment
 
 ```bash
-cp stack/.env.example stack/.env
+cp stack/.env.sample stack/.env
 ```
 
-Edit `stack/.env` as needed.
+Edit `stack/.env` to select your GPU backend and ports. The `COMPOSE_FILE` variable controls which Docker Compose override files are layered:
+
+- **NVIDIA CUDA** (default): `COMPOSE_FILE=docker-compose.yml:docker-compose.cuda.yml`
+- **AMD/Intel Vulkan**: `COMPOSE_FILE=docker-compose.yml:docker-compose.vulkan.yml`
+- **CPU-only**: `COMPOSE_FILE=docker-compose.yml:docker-compose.cpu.yml`
+
+For HTTPS, add `docker-compose.https.yml` to `COMPOSE_FILE` and set `CADDYFILE=Caddyfile.https`.
 
 ## Install Frontend Dependencies
 
@@ -51,11 +57,25 @@ cd stack/frontend && npm install
 ## Start the Stack
 
 ```bash
+./scripts/stack.sh up
+```
+
+Or directly from the stack directory:
+
+```bash
 cd stack && docker compose up -d
 ```
 
-For development with exposed ports:
+For development with exposed ports, add `docker-compose.dev.yml` to `COMPOSE_FILE` in `.env`:
+
+```
+COMPOSE_FILE=docker-compose.yml:docker-compose.cuda.yml:docker-compose.dev.yml
+```
+
+## Server Deployments
+
+For remote servers where Vite env injection may not set the iframe URL correctly, use the bootstrap script:
 
 ```bash
-cd stack && docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+./scripts/bootstrap-iframe.sh --host 192.168.1.50
 ```

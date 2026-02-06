@@ -13,6 +13,15 @@
 
 ## Done
 <!-- DONE_START -->
+- [x] MAINT-1: PRP Templates + AI Provenance Workflow (2026-02-06)
+  - PRP planning templates (proposal_standalone, prp_standalone, prp_bulk)
+  - AI provenance workflow via gh-dispatch-ai.yml with LearnStream Claude AI GitHub App
+- [x] PI-1: Multi-Environment Deployment Configuration (2026-02-06)
+  - COMPOSE_FILE-driven GPU overrides (CUDA/Vulkan/CPU), HTTP-by-default with HTTPS opt-in
+  - Parameterized Caddy ports (HTTP_PORT, OPENWEBUI_PORT), switchable Caddyfile mount
+  - Dynamic iframe URL via window.location + Vite env, bootstrap-iframe.sh for server deployments
+  - Simplified stack.sh using --project-directory, removed --dev flag
+  - Rewrote .env.sample with comprehensive documentation
 - [x] BOOTSTRAP-5: Agent Framework + Neuralizer Detection (2026-02-04)
   - Agent framework ported from catalytic-customer: BaseAgent ABC, BaseClient ABC, AgentActivityMonitor, AgentEvent model
   - Neuralizer agent classifies prompts for PII, credentials, log files, code secrets, infrastructure via local LLM
