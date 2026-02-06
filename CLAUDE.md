@@ -24,10 +24,8 @@ Mark gathers context and dispatches .github/workflows/gh-dispatch-ai.yml with pr
 When using `/generate-prp` or `/execute-prp`, read `.ai/AGENTS.md` for complete planning workflow directives.
 
 ### Real-Time Updates
-WebSocket composables exist for different purposes:
-- `useAgentWebSocket.js` - Agent activity streaming (inference events, errors)
-
-Use the appropriate composable for your feature. Don't create new WebSocket connections unless adding a genuinely new real-time data source.
+WebSocket `/ws/prompts` streams intercepted prompts from Redis pub/sub to the frontend (`SanitizedPanel.vue`).
+Don't create new WebSocket connections unless adding a genuinely new real-time data source.
 
 ### AskUserQuestion Tool
 Never use this tool. Ask questions directly in response text - the tool's UI prevents freeform answers and doesn't show all questions at once.
