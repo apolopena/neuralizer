@@ -13,6 +13,9 @@
 
 ## Done
 <!-- DONE_START -->
+- [x] MAINT-1: PRP Templates + AI Provenance Workflow (2026-02-06)
+  - PRP planning templates (proposal_standalone, prp_standalone, prp_bulk)
+  - AI provenance workflow via gh-dispatch-ai.yml with LearnStream Claude AI GitHub App
 - [x] PI-1: Multi-Environment Deployment Configuration (2026-02-06)
   - COMPOSE_FILE-driven GPU overrides (CUDA/Vulkan/CPU), HTTP-by-default with HTTPS opt-in
   - Parameterized Caddy ports (HTTP_PORT, OPENWEBUI_PORT), switchable Caddyfile mount
