@@ -1,8 +1,19 @@
 <template>
-  <header class="h-14 bg-black flex items-center px-4 gap-3 shrink-0">
+  <header class="h-20 bg-black flex items-center px-4 gap-3 shrink-0">
     <!-- Logo -->
-    <img src="../assets/logo-header.png" alt="NeurALIzer" class="h-10"
-         :class="{ '[filter:grayscale(0.3)]': !isScrubbing }" />
+    <div class="relative shrink-0">
+      <img src="../assets/logo-header.png" alt="NeurALIzer" class="h-14" />
+      <!-- Disabled indicator — always rendered, animated via GSAP stroke-dashoffset -->
+      <svg ref="disabledSvgRef" class="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)]"
+           viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" style="display: none">
+        <!-- Red border (underneath) -->
+        <circle class="dis-circle" cx="50" cy="50" r="40" fill="none" stroke="rgba(239, 68, 68, 0.3)" stroke-width="10" />
+        <line class="dis-line" x1="22" y1="22" x2="78" y2="78" stroke="rgba(239, 68, 68, 0.3)" stroke-width="10" stroke-linecap="round" />
+        <!-- Cyan fill (on top) -->
+        <circle class="dis-circle" cx="50" cy="50" r="40" fill="none" stroke="rgba(165, 243, 252, 0.5)" stroke-width="4" />
+        <line class="dis-line" x1="22" y1="22" x2="78" y2="78" stroke="rgba(165, 243, 252, 0.5)" stroke-width="4" stroke-linecap="round" />
+      </svg>
+    </div>
 
     <!-- Status Pill -->
     <div ref="pillRef" role="switch" tabindex="0" :aria-checked="isScrubbing"
@@ -19,18 +30,15 @@
       </template>
       <!-- Confirmation state -->
       <template v-else>
-        <span>Chat directly without scrubbing?</span>
+        <span>Stop intercepting? This will start a free chat session.</span>
         <button @click.stop="cancelConfirm"
-                class="w-6 h-6 rounded-full bg-gray-700 hover:bg-gray-600 text-xs flex items-center justify-center"
+                class="w-6 h-6 rounded-full bg-red-950 hover:bg-red-900 text-red-600 text-xs flex items-center justify-center"
                 aria-label="Cancel">&#10005;</button>
         <button @click.stop="confirmDisable"
-                class="w-6 h-6 rounded-full bg-gray-700 hover:bg-gray-600 text-xs flex items-center justify-center"
+                class="w-6 h-6 rounded-full bg-green-950 hover:bg-green-900 text-green-600 text-xs flex items-center justify-center"
                 aria-label="Confirm">&#10003;</button>
       </template>
     </div>
-
-    <!-- Spacer -->
-    <div class="flex-1"></div>
 
     <!-- Settings Gear -->
     <button @click="$emit('toggle-settings')" class="text-gray-400 hover:text-gray-200"
@@ -44,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useGsap } from '../composables/useGsap.js'
 
 const props = defineProps({ isScrubbing: Boolean })
@@ -52,7 +60,12 @@ const emit = defineEmits(['mode-change', 'toggle-settings'])
 
 const { gsap, defaults } = useGsap()
 const pillRef = ref(null)
+const disabledSvgRef = ref(null)
 const confirming = ref(false)
+
+// Stroke lengths for draw animation
+const CIRCLE_LEN = 2 * Math.PI * 40  // ~251
+const LINE_LEN = Math.sqrt(56 * 56 + 56 * 56)  // ~79
 
 const dotClass = computed(() =>
   props.isScrubbing
@@ -62,21 +75,53 @@ const dotClass = computed(() =>
 
 const pillText = computed(() =>
   props.isScrubbing
-    ? 'Prompts are scrubbed before sending'
-    : 'Prompts are sent without scrubbing'
+    ? 'Prompts are being intercepted and scrubbed'
+    : 'Free chat — prompts are not intercepted'
 )
+
+// Animate the disabled indicator SVG in/out
+watch(() => props.isScrubbing, (scrubbing) => {
+  const svg = disabledSvgRef.value
+  if (!svg) return
+
+  const circles = svg.querySelectorAll('.dis-circle')
+  const lines = svg.querySelectorAll('.dis-line')
+
+  if (!scrubbing) {
+    // Draw in: show SVG, circle draws first, then slash
+    gsap.set(svg, { display: 'block' })
+    gsap.set(circles, { strokeDasharray: CIRCLE_LEN, strokeDashoffset: CIRCLE_LEN })
+    gsap.set(lines, { strokeDasharray: LINE_LEN, strokeDashoffset: LINE_LEN })
+    gsap.to(circles, { strokeDashoffset: 0, duration: 0.4, ease: 'power2.out' })
+    gsap.to(lines, { strokeDashoffset: 0, duration: 0.3, ease: 'power2.out', delay: 0.2 })
+  } else {
+    // Draw out: slash erases first, then circle
+    gsap.to(lines, { strokeDashoffset: LINE_LEN, duration: 0.2, ease: 'power2.in' })
+    gsap.to(circles, {
+      strokeDashoffset: CIRCLE_LEN,
+      duration: 0.3,
+      ease: 'power2.in',
+      delay: 0.1,
+      onComplete: () => gsap.set(svg, { display: 'none' })
+    })
+  }
+})
 
 async function animatePillMorph() {
   const el = pillRef.value
   if (!el) return
   const oldWidth = el.offsetWidth
+  // Lock width and prevent text reflow before content swap
+  gsap.set(el, { width: oldWidth, overflow: 'hidden', whiteSpace: 'nowrap' })
   confirming.value = !confirming.value
   await nextTick()
-  const newWidth = el.offsetWidth
-  gsap.fromTo(el,
-    { width: oldWidth },
-    { width: newWidth, duration: defaults.durationPill, ease: defaults.easePill, clearProps: 'width' }
-  )
+  const newWidth = el.scrollWidth
+  gsap.to(el, {
+    width: newWidth,
+    duration: defaults.durationPill,
+    ease: defaults.easePill,
+    onComplete: () => gsap.set(el, { clearProps: 'width,overflow,whiteSpace' })
+  })
 }
 
 function handlePillClick() {

@@ -1,59 +1,78 @@
 <template>
   <div ref="containerRef" class="flex flex-1 min-h-0">
     <!-- Left pane: Intercepted prompts -->
-    <div ref="scrubPaneRef" class="border-r border-gray-800" style="flex-basis: 50%">
+    <div ref="scrubPaneRef" class="border-r border-gray-800 min-w-0 overflow-hidden" style="flex-basis: 50%">
       <SanitizedPanel />
     </div>
     <!-- Right pane: Open WebUI chat -->
-    <div ref="chatPaneRef" style="flex-basis: 50%; flex-grow: 1">
+    <div ref="chatPaneRef" class="min-w-0" style="flex-basis: 50%; flex-grow: 1">
       <ChatPanel ref="chatPanelRef" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
+import { gsap } from 'gsap'
 import SanitizedPanel from '../components/SanitizedPanel.vue'
 import ChatPanel from '../components/ChatPanel.vue'
-import { useGsap } from '../composables/useGsap.js'
 
 const props = defineProps({ isScrubbing: Boolean })
 
-const { gsap, resizeTo } = useGsap()
 const containerRef = ref(null)
 const scrubPaneRef = ref(null)
 const chatPaneRef = ref(null)
 const chatPanelRef = ref(null)
 
-let ctx
-onMounted(() => {
-  ctx = gsap.context(() => {}, containerRef.value)
+let activeTl = null
+
+onUnmounted(() => {
+  if (activeTl) { activeTl.kill(); activeTl = null }
 })
-onUnmounted(() => ctx?.revert())
 
 watch(() => props.isScrubbing, (scrubbing) => {
-  if (!scrubPaneRef.value || !chatPaneRef.value) return
+  const scrub = scrubPaneRef.value
+  const chat = chatPaneRef.value
+  if (!scrub || !chat) return
 
-  const overlayEl = chatPanelRef.value?.overlayRef
+  if (activeTl) { activeTl.kill(); activeTl = null }
 
-  ctx.add(() => {
-    if (!scrubbing) {
-      resizeTo(
-        [
-          { el: scrubPaneRef.value, to: '0%' },
-          { el: chatPaneRef.value, to: '100%' },
-        ],
-        { fadeEl: scrubPaneRef.value, fadeOut: true, overlayEl }
-      )
-    } else {
-      resizeTo(
-        [
-          { el: scrubPaneRef.value, to: '50%' },
-          { el: chatPaneRef.value, to: '50%' },
-        ],
-        { fadeEl: scrubPaneRef.value, fadeOut: false, overlayEl }
-      )
+  // Lock to pixel widths so GSAP animates actual size, not flex negotiation
+  const scrubW = scrub.offsetWidth
+  const chatW = chat.offsetWidth
+  const totalW = scrubW + chatW
+
+  gsap.set(scrub, { width: scrubW, flexBasis: 'auto', flexGrow: 0, flexShrink: 0 })
+  gsap.set(chat, { width: chatW, flexBasis: 'auto', flexGrow: 0, flexShrink: 0 })
+
+  const tl = gsap.timeline({
+    onComplete() {
+      // Restore flex layout at final state
+      if (!scrubbing) {
+        gsap.set(scrub, { clearProps: 'all' })
+        gsap.set(chat, { clearProps: 'all' })
+        scrub.style.flexBasis = '0%'
+        chat.style.flexBasis = '100%'
+        chat.style.flexGrow = '1'
+      } else {
+        gsap.set(scrub, { clearProps: 'all' })
+        gsap.set(chat, { clearProps: 'all' })
+        scrub.style.flexBasis = '50%'
+        chat.style.flexBasis = '50%'
+        chat.style.flexGrow = '1'
+      }
+      activeTl = null
     }
   })
+
+  if (!scrubbing) {
+    tl.to(scrub, { width: 0, duration: 0.6, ease: 'power2.out' }, 0)
+      .to(chat, { width: totalW, duration: 0.6, ease: 'power2.out' }, 0)
+  } else {
+    tl.to(scrub, { width: totalW / 2, duration: 0.6, ease: 'power2.out' }, 0)
+      .to(chat, { width: totalW / 2, duration: 0.6, ease: 'power2.out' }, 0)
+  }
+
+  activeTl = tl
 })
 </script>

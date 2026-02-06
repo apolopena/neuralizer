@@ -45,8 +45,9 @@ export function useGsap() {
   })
 
   /** Choreographed horizontal slide with backdrop. Call inside ctx.add() for cleanup. */
-  function slideTo(el, backdropEl, open) {
+  function slideTo(el, backdropEl, open, { fromLeft = false } = {}) {
     const d = _defaults || resolveDefaults()
+    const offScreen = fromLeft ? '-100%' : '100%'
     const tl = gsap.timeline({
       defaults: { duration: d.durationDrawer, ease: d.easePanel }
     })
@@ -54,9 +55,9 @@ export function useGsap() {
     if (open) {
       tl.set(el, { display: 'block' })
         .fromTo(backdropEl, { opacity: 0 }, { opacity: 1, duration: d.durationDrawer * 0.5 })
-        .fromTo(el, { x: '100%' }, { x: '0%' }, '<')
+        .fromTo(el, { x: offScreen }, { x: '0%' }, '<')
     } else {
-      tl.to(el, { x: '100%' })
+      tl.to(el, { x: offScreen })
         .to(backdropEl, { opacity: 0, duration: d.durationDrawer * 0.5 }, '<')
         .set(el, { display: 'none' })
     }
@@ -68,14 +69,20 @@ export function useGsap() {
   function resizeTo(targets, opts = {}) {
     const d = _defaults || resolveDefaults()
     const tl = gsap.timeline({
-      defaults: { duration: d.durationPanel, ease: d.easePanel }
+      defaults: { ease: d.easePanel }
     })
 
-    if (opts.overlayEl) tl.set(opts.overlayEl, { display: 'block', opacity: 1 })
-
+    // Instant setup at position 0
+    if (opts.overlayEl) tl.set(opts.overlayEl, { display: 'block', opacity: 1 }, 0)
     targets.forEach(({ el }) => tl.set(el, { overflow: 'hidden' }, 0))
-    targets.forEach(({ el, to }) => tl.to(el, { flexBasis: to }, 0))
 
+    // Animate flex-basis with explicit fromTo
+    targets.forEach(({ el, from, to }) => {
+      const startVal = from || getComputedStyle(el).flexBasis
+      tl.fromTo(el, { flexBasis: startVal }, { flexBasis: to, duration: d.durationPanel }, 0)
+    })
+
+    // Fade scrub panel
     if (opts.fadeEl) {
       tl.to(opts.fadeEl, {
         opacity: opts.fadeOut ? 0 : 1,
@@ -83,6 +90,7 @@ export function useGsap() {
       }, opts.fadeOut ? 0 : d.durationPanel * 0.4)
     }
 
+    // Cleanup after animation
     tl.call(() => targets.forEach(({ el }) => { el.style.overflow = '' }))
 
     if (opts.overlayEl) {

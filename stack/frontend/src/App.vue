@@ -13,14 +13,36 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import SettingsDrawer from './components/SettingsDrawer.vue'
 
 const isScrubbing = ref(true)
 const settingsOpen = ref(false)
 
-function handleModeChange(scrubbing) {
-  isScrubbing.value = scrubbing
+onMounted(async () => {
+  try {
+    await fetch('/v1/mode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scrubbing: true }),
+    })
+  } catch {
+    // Backend unreachable — local state already defaults to scrubbing on
+  }
+})
+
+async function handleModeChange(scrubbing) {
+  try {
+    const resp = await fetch('/v1/mode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scrubbing }),
+    })
+    if (!resp.ok) return
+    isScrubbing.value = scrubbing
+  } catch {
+    // Network error — don't change local state
+  }
 }
 </script>

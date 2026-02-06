@@ -6,7 +6,7 @@
   <!-- Drawer -->
   <aside ref="drawerRef" role="dialog" aria-modal="true"
          aria-label="Settings"
-         class="fixed top-0 right-0 h-full w-80 bg-gray-900 border-l border-gray-700 z-50 shadow-xl"
+         class="fixed top-0 left-0 h-full w-80 bg-gray-900 border-r border-gray-700 z-50 shadow-xl"
          :class="{ hidden: !visible }">
     <div class="flex items-center justify-between p-4 border-b border-gray-800">
       <h2 class="text-lg font-semibold text-gray-100">Settings</h2>
@@ -63,10 +63,10 @@ watch(() => props.open, async (isOpen) => {
   if (isOpen) {
     visible.value = true
     await nextTick()
-    ctx.add(() => { activeTl = slideTo(drawerRef.value, backdropRef.value, true) })
+    ctx.add(() => { activeTl = slideTo(drawerRef.value, backdropRef.value, true, { fromLeft: true }) })
   } else if (visible.value) {
     ctx.add(() => {
-      activeTl = slideTo(drawerRef.value, backdropRef.value, false)
+      activeTl = slideTo(drawerRef.value, backdropRef.value, false, { fromLeft: true })
       activeTl.then(() => { visible.value = false; activeTl = null })
     })
   }
