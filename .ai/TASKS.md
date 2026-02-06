@@ -13,6 +13,12 @@
 
 ## Done
 <!-- DONE_START -->
+- [x] PI-2: Header, Motion System & Shared CSS Architecture (2026-02-06)
+  - AppHeader with branded logo, stateful scrubbing pill toggle (confirmation UX), settings gear
+  - GSAP-powered mode switching: animated flex-basis 50/50 ↔ 0/100 with iframe overlay protection
+  - SettingsDrawer sliding panel with backdrop, escape-key, placeholder scrubbing settings
+  - CSS design tokens (:root custom properties), prefers-reduced-motion support
+  - useGsap composable (slideTo, resizeTo helpers, design token singleton)
 - [x] MAINT-1: PRP Templates + AI Provenance Workflow (2026-02-06)
   - PRP planning templates (proposal_standalone, prp_standalone, prp_bulk)
   - AI provenance workflow via gh-dispatch-ai.yml with LearnStream Claude AI GitHub App
