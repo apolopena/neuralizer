@@ -32,6 +32,9 @@ Use the appropriate composable for your feature. Don't create new WebSocket conn
 ### AskUserQuestion Tool
 Never use this tool. Ask questions directly in response text - the tool's UI prevents freeform answers and doesn't show all questions at once.
 
+### Python Environment
+Use `uv` for all Python work. A `.venv` should exist at repo root — if missing, create it with `uv venv .venv`.
+
 ### Backend Testing & Linting
 See `docs/unit-tests.md` for complete setup. Quick reference:
 ```bash
