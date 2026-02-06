@@ -55,6 +55,18 @@ case "$1" in
             echo -e "${GREEN}$SERVICE rebuilt and started${NC}"
         fi
         ;;
+    recreate)
+        SERVICE=${2:-}
+        if [ -z "$SERVICE" ]; then
+            echo -e "${BLUE}Recreating NeurALIzer stack...${NC}"
+            docker compose up -d --force-recreate
+            echo -e "${GREEN}Stack recreated${NC}"
+        else
+            echo -e "${BLUE}Recreating $SERVICE...${NC}"
+            docker compose up -d --force-recreate "$SERVICE"
+            echo -e "${GREEN}$SERVICE recreated${NC}"
+        fi
+        ;;
     logs)
         SERVICE=${2:-}
         if [ -z "$SERVICE" ]; then
@@ -80,6 +92,7 @@ case "$1" in
         echo "  down      Stop the stack"
         echo "  restart   Restart the stack"
         echo "  rebuild   Rebuild all images and restart (optionally: rebuild <service>)"
+        echo "  recreate  Force-recreate containers to reload .env (optionally: recreate <service>)"
         echo "  logs      Show logs (optionally: logs <service>)"
         echo "  status    Show running containers"
         echo ""
