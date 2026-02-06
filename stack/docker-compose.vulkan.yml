@@ -1,0 +1,6 @@
+# GPU: Vulkan (AMD, Intel, or NVIDIA)
+services:
+  llm:
+    image: ${LLM_IMAGE:-ghcr.io/ggml-org/llama.cpp:server-vulkan}
+    devices:
+      - /dev/dri:/dev/dri

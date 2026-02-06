@@ -58,7 +58,7 @@ $RECYCLE.BIN/
 # Environment
 .env
 .env.*
-!.env.example
+!.env.sample
 
 # Docker
 docker-compose.override.yml
@@ -72,6 +72,10 @@ logs/
 
 # Planning (draft, not tracked yet)
 .ai/planning/prd/PLANNING.md
+.ai/planning/prp/proposals/*
+!.ai/planning/prp/proposals/.gitkeep
+.ai/planning/prp/instances/*
+!.ai/planning/prp/instances/.gitkeep
 
 # Stack runtime data
 stack/models/*

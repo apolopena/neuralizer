@@ -1,4 +1,4 @@
-:80 {
+localhost {
     # Backend health check
     handle /health {
         reverse_proxy backend:8000
@@ -26,6 +26,6 @@
 }
 
 # Open WebUI on dedicated port (iframe-friendly, no path conflicts)
-:8082 {
+localhost:8082 {
     reverse_proxy open-webui:8081
 }

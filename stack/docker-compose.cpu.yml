@@ -1,0 +1,4 @@
+# GPU: CPU-only
+services:
+  llm:
+    image: ${LLM_IMAGE:-ghcr.io/ggml-org/llama.cpp:server}

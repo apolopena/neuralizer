@@ -1,0 +1,5 @@
+# HTTPS: adds 443 port mapping
+services:
+  caddy:
+    ports:
+      - "${HTTPS_PORT:-443}:443"

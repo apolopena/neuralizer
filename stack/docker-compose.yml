@@ -3,13 +3,12 @@ services:
     container_name: neuralizer-caddy
     image: caddy:2-alpine
     ports:
-      - "80:80"
-      - "443:443"
-      - "8082:8082"
+      - "${HTTP_PORT:-80}:80"
+      - "${OPENWEBUI_PORT:-8082}:8082"
     env_file:
       - .env
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./${CADDYFILE:-Caddyfile}:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
     networks:
@@ -21,8 +20,6 @@ services:
     env_file:
       - .env
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
       - LLM_BASE_URL=http://llm:8080
     depends_on:
       redis:
@@ -56,7 +53,6 @@ services:
       - app_network
 
   llm:
-    image: ${LLM_IMAGE:-ghcr.io/ggml-org/llama.cpp:server-cuda}
     container_name: neuralizer-llm
     restart: unless-stopped
     command: >
@@ -67,13 +63,6 @@ services:
       --port 8080
     volumes:
       - ./models:/models:ro
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 15s
@@ -116,6 +105,8 @@ services:
     build: ./frontend
     env_file:
       - .env
+    environment:
+      - VITE_OPENWEBUI_PORT=${OPENWEBUI_PORT:-8082}
     volumes:
       - ./frontend/src:/app/src
       - ./frontend/vite.config.js:/app/vite.config.js:ro
