@@ -24,19 +24,20 @@ Mark gathers context and dispatches .github/workflows/gh-dispatch-ai.yml with pr
 When using `/generate-prp` or `/execute-prp`, read `.ai/AGENTS.md` for complete planning workflow directives.
 
 ### Real-Time Updates
-WebSocket composables exist for different purposes:
-- `useAgentWebSocket.js` - Agent activity streaming (inference events, errors)
-
-Use the appropriate composable for your feature. Don't create new WebSocket connections unless adding a genuinely new real-time data source.
+WebSocket `/ws/prompts` streams intercepted prompts from Redis pub/sub to the frontend (`SanitizedPanel.vue`).
+Don't create new WebSocket connections unless adding a genuinely new real-time data source.
 
 ### AskUserQuestion Tool
 Never use this tool. Ask questions directly in response text - the tool's UI prevents freeform answers and doesn't show all questions at once.
+
+### Python Environment
+Use `uv` for all Python work. A `.venv` should exist at repo root — if missing, create it with `uv venv .venv`.
 
 ### Backend Testing & Linting
 See `docs/unit-tests.md` for complete setup. Quick reference:
 ```bash
 cd backend/tests && uv pip install -r requirements.txt  # Install/update deps
-cd backend && uv run ruff check . && uv run ruff format .  # Lint
+uv tool run ruff check stack/backend && uv tool run ruff format stack/backend  # Lint
 ./scripts/run-tests.sh -m  # Run main backend tests
 ```
 

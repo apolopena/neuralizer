@@ -1,1 +1,27 @@
 @import "tailwindcss";
+
+:root {
+  /* Colors */
+  --color-scrub-active: #eab308;     /* Tailwind yellow-500 — matches SanitizedPanel processing pulse */
+  --color-scrub-inactive: #06b6d4;   /* Tailwind cyan-500 */
+  --color-brand-cyan: #06b6d4;       /* Tailwind cyan-500 */
+  --color-bg-header: #000;
+  --color-bg-app: #030712;           /* Tailwind gray-950 */
+
+  /* Timing (ms values for reference; GSAP uses seconds) */
+  --duration-panel: 0.4;             /* Panel resize (seconds) */
+  --duration-pill: 0.2;              /* Pill morph (seconds) */
+  --duration-drawer: 0.3;            /* Drawer slide (seconds) */
+
+  /* Easing (GSAP string equivalents) */
+  --ease-panel: power2.out;
+  --ease-pill: power1.inOut;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-panel: 0;
+    --duration-pill: 0;
+    --duration-drawer: 0;
+  }
+}

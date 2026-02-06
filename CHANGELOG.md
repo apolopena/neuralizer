@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.0.4](https://github.com/apolopena/neuralizer/releases/tag/v0.0.4)
+
+### [PR #6](https://github.com/apolopena/neuralizer/pull/6) - PI-2: Header, Scrubbing Mode Toggle & Interception Control
+
+**Branch:** ap-dev-working3 → main
+
+**Status:** ✅ Merged
+
+#### PI-2: Header, Scrubbing Mode Toggle & Interception Control
+
+- [[d42c0be](https://github.com/apolopena/neuralizer/commit/d42c0be)] **FEAT:** *frontend*
+  - Add scrubbing mode toggle with backend proxy integration via GET/POST `/v1/mode` and LLM passthrough in free chat mode
+
+- [[169c6b7](https://github.com/apolopena/neuralizer/commit/169c6b7)] **FEAT:** *infrastructure*
+  - Add `recreate` command to `stack.sh` for full service recreation with compose files and environment handling
+
+- [[66140ad](https://github.com/apolopena/neuralizer/commit/66140ad)] **DOCS:** *config*
+  - Update WebSocket reference in `CLAUDE.md` from `/ws/` to `/ws/prompts` for real-time prompt streaming
+
+- [[17fe1af](https://github.com/apolopena/neuralizer/commit/17fe1af)] **FIX:** *config*
+  - Fix ruff command in `CLAUDE.md` to use `uv tool run` for proper environment isolation
+
+- [[6203bdf](https://github.com/apolopena/neuralizer/commit/6203bdf)] **FEAT:** *frontend*
+  - Add `AppHeader` with branded logo, stateful scrubbing pill toggle with confirmation UX, settings gear icon, GSAP-powered animated panel resize (50/50 to 0/100), `SettingsDrawer` sliding panel with backdrop and escape-key support, CSS design tokens via `:root` custom properties, prefers-reduced-motion support, and `useGsap` composable; add SVG prohibition overlay on logo during scrubbing disabled with GSAP stroke draw animation
+
+- [[fe6d554](https://github.com/apolopena/neuralizer/commit/fe6d554)] **CHORE:** *config*
+  - Add deferred directory to `.gitignore`
+
+- [[b315b3d](https://github.com/apolopena/neuralizer/commit/b315b3d)] **DOCS:** *config*
+  - Add `uv` and `.venv` directive to `CLAUDE.md` for Python environment management
+
+- [[fe169b7](https://github.com/apolopena/neuralizer/commit/fe169b7)] **DOCS:** *config*
+  - Add UX designer role prompt to `.claude/` directory
+
+---
+
+**System Status:** ✅ Header UI with scrubbing mode toggle operational
+**PI-2 Focus:** ✅ AppHeader with logo and mode toggle | ✅ GSAP panel animations | ✅ Backend scrubbing mode control | ✅ Frontend/backend sync | ✅ SVG prohibition overlay with animation
+**Maintenance:** ✅ stack.sh rebuild/recreate commands | ✅ CLAUDE.md updated with uv directives and WebSocket reference
+
+---
+
 ## [v0.0.3](https://github.com/apolopena/neuralizer/releases/tag/v0.0.3)
 
 ### [PR #5](https://github.com/apolopena/neuralizer/pull/5) - PI-1: Multi-Environment Deployment Configuration
