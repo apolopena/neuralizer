@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.1.0](https://github.com/apolopena/neuralizer/releases/tag/v0.1.0)
+
+### [PR #11](https://github.com/apolopena/neuralizer/pull/11) - PI-3: MCP Scrubbing Pipeline & Debug Tracing
+
+**Branch:** PI-3_scrubbing-pipeline → main
+
+**Status:** ✅ Merged
+
+#### PI-3: MCP Scrubbing Pipeline & Debug Tracing
+
+- [[651f8d9](https://github.com/apolopena/neuralizer/commit/651f8d9)] **DOCS:** *reference*
+  - Add Anthropic model names reference in `.ai/docs/anthropic/model-names.md`
+
+- [[f7ae0bb](https://github.com/apolopena/neuralizer/commit/f7ae0bb)] **FEAT:** *scrubbing-pipeline*
+  - MCP scrubbing server via FastMCP subprocess with JSON-RPC protocol
+  - Span-based tokenizer for PII replacement (prevents over-scrubbing)
+  - Log patterns: IP, private IP, internal URL, timestamp, endpoint, user, terminal_user
+  - Standard patterns: email, phone, name, API key, secret, bearer token, path, resource ID
+  - Terminal user pattern for `whoami`, `id`, `logname` command output
+  - File upload endpoint with sandbox path validation
+  - Debug trace middleware with WebSocket streaming (`/ws/debug`)
+  - `DebugPanel.vue` draggable debug trace viewer (dev mode only)
+  - Processing indicator in left panel before detection runs
+  - Fail-closed behavior on detection errors
+  - Config API for frontend feature flags (`/api/config`)
+  - Auto-scrolling `SanitizedPanel.vue` with shield emoji status
+  - Unit tests for tokenizer, scrubber, patterns, MCP client, path sandbox
+
+---
+
+**System Status:** ✅ MCP scrubbing pipeline with comprehensive PII detection operational
+**PI-3 Focus:** ✅ FastMCP subprocess server | ✅ Span-based tokenizer | ✅ Log and standard patterns | ✅ File upload with sandbox validation | ✅ Debug trace WebSocket streaming
+**Maintenance:** ✅ Config API for feature flags | ✅ Fail-closed error handling | ✅ MCP subprocess auto-restart
+
+---
+
 ## [v0.0.4](https://github.com/apolopena/neuralizer/releases/tag/v0.0.4)
 
 ### [PR #6](https://github.com/apolopena/neuralizer/pull/6) - PI-2: Header, Scrubbing Mode Toggle & Interception Control
