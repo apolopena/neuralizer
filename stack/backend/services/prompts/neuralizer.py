@@ -48,19 +48,19 @@ jdoe
 ~/projects/my-app
 
 Output:
-{"needs_sanitization": true, "category": "pii", "summary": "Terminal output reveals username and home directory path from whoami command.", "items_detected": ["jdoe", "~/projects/my-app"]}
+{"needs_sanitization": true, "category": "pii", "summary": "Terminal output reveals username and home directory path from whoami command.", "items_detected": ["jdoe", "~/projects/my-app"], "item_types": ["name", "path"]}
 
 Input:
 How do I reverse a list in Python?
 
 Output:
-{"needs_sanitization": false, "category": "clean", "summary": "No sensitive data detected.", "items_detected": []}
+{"needs_sanitization": false, "category": "clean", "summary": "No sensitive data detected.", "items_detected": [], "item_types": []}
 
 Input:
 export DATABASE_URL=postgres://admin:s3cret@10.0.1.42:5432/prod_db
 
 Output:
-{"needs_sanitization": true, "category": "credentials", "summary": "Environment variable contains database credentials with username, password, internal IP, and database name.", "items_detected": ["admin", "s3cret", "10.0.1.42", "prod_db"]}
+{"needs_sanitization": true, "category": "credentials", "summary": "Environment variable contains database credentials with username, password, internal IP, and database name.", "items_detected": ["admin", "s3cret", "10.0.1.42", "prod_db"], "item_types": ["secret", "ip"]}
 
 Input:
 [+] Running 4/4
@@ -70,7 +70,7 @@ Input:
 ✔ Container myapp-worker   Started
 
 Output:
-{"needs_sanitization": false, "category": "clean", "summary": "No sensitive data detected.", "items_detected": []}
+{"needs_sanitization": false, "category": "clean", "summary": "No sensitive data detected.", "items_detected": [], "item_types": []}
 
 Input:
 ❯ docker compose restart backend
@@ -78,7 +78,13 @@ Input:
 ✔ Container myapp-backend  Started
 
 Output:
-{"needs_sanitization": false, "category": "clean", "summary": "No sensitive data detected.", "items_detected": []}
+{"needs_sanitization": false, "category": "clean", "summary": "No sensitive data detected.", "items_detected": [], "item_types": []}
+
+Input:
+2024-01-15 10:30:45 INFO user=johndoe GET /api/v1/users from 192.168.1.100
+
+Output:
+{"needs_sanitization": true, "category": "log_file", "summary": "Server log contains username, API endpoint, IP address, and timestamp.", "items_detected": ["johndoe", "/api/v1/users", "192.168.1.100", "2024-01-15 10:30:45"], "item_types": ["user", "endpoint", "ip", "timestamp"]}
 
 ## Response format
 
@@ -88,8 +94,12 @@ Respond with ONLY a JSON object. No markdown, no code fences, no explanation out
   "needs_sanitization": true/false,
   "category": "pii" | "credentials" | "log_file" | "code_secrets" | "infrastructure" | "clean",
   "summary": "Brief one-sentence description of what was detected",
-  "items_detected": ["list", "of", "specific", "items", "found"]
+  "items_detected": ["list", "of", "specific", "items", "found"],
+  "item_types": ["list", "of", "types", "found"]
 }
+
+The `item_types` field should list the TYPES of sensitive data found, not the values themselves.
+Valid item_types: email, phone, name, api_key, secret, bearer, path, resource_id, ip, private_ip, internal_url, timestamp, endpoint, user
 """
 
 

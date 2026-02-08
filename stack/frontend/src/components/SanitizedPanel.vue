@@ -30,11 +30,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick, watch } from "vue";
+import { ref, onMounted, onUnmounted, nextTick } from "vue";
 
 const prompts = ref([]);
 const scrollContainer = ref(null);
 let ws = null;
+
+async function scrollToBottom() {
+  await nextTick();
+  if (scrollContainer.value) {
+    scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
+  }
+}
 
 function connect() {
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
@@ -52,6 +59,8 @@ function connect() {
       } else {
         prompts.value.push(data);
       }
+      // Auto-scroll on any update
+      scrollToBottom();
     } catch {
       // ignore malformed messages
     }
@@ -62,16 +71,6 @@ function connect() {
     setTimeout(connect, 2000);
   };
 }
-
-watch(
-  () => prompts.value.length,
-  async () => {
-    await nextTick();
-    if (scrollContainer.value) {
-      scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
-    }
-  }
-);
 
 onMounted(() => {
   connect();

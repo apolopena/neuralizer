@@ -40,6 +40,15 @@
       </template>
     </div>
 
+    <!-- Debug Toggle (only in dev mode) -->
+    <button v-if="devMode" @click="$emit('toggle-debug')"
+            class="text-gray-400 hover:text-gray-200" :class="{ 'text-yellow-400': debugOpen }"
+            aria-label="Debug Panel">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 12.75c1.148 0 2.278.08 3.383.237 1.037.146 1.866.966 1.866 2.013 0 3.728-2.35 6.75-5.25 6.75S6.75 18.728 6.75 15c0-1.046.83-1.867 1.866-2.013A24.204 24.204 0 0 1 12 12.75Zm0 0c2.883 0 5.647.508 8.207 1.44a23.91 23.91 0 0 1-1.152 6.06M12 12.75c-2.883 0-5.647.508-8.207 1.44a23.91 23.91 0 0 0 1.152 6.06M12 12.75V6.75m0 0a3 3 0 0 0 3-3V2.25M12 6.75a3 3 0 0 1-3-3V2.25M9 2.25h6" />
+      </svg>
+    </button>
+
     <!-- Settings Gear -->
     <button @click="$emit('toggle-settings')" class="text-gray-400 hover:text-gray-200"
             aria-label="Settings">
@@ -55,8 +64,12 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import { useGsap } from '../composables/useGsap.js'
 
-const props = defineProps({ isScrubbing: Boolean })
-const emit = defineEmits(['mode-change', 'toggle-settings'])
+const props = defineProps({
+  isScrubbing: Boolean,
+  devMode: Boolean,
+  debugOpen: Boolean,
+})
+const emit = defineEmits(['mode-change', 'toggle-settings', 'toggle-debug'])
 
 const { gsap, defaults } = useGsap()
 const pillRef = ref(null)

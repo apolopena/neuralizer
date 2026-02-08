@@ -25,6 +25,63 @@ class Neuralizer(BaseAgent):
     whether user input contains sensitive data.
     """
 
+    async def detect(self, text: str) -> dict:
+        """Quick detection pass — classify content without full agent flow.
+
+        Used by routes for determining which MCP tool to call.
+
+        Args:
+            text: Content to analyze
+
+        Returns:
+            {needs_sanitization, category, item_types, summary}
+        """
+        messages = build_detect_prompt(text)
+
+        try:
+            raw = await self.client.complete(text, messages=messages, temperature=0.3)
+            detection = json.loads(raw)
+            logger.info(f"Neuralizer detection: {detection}")
+
+            # Ensure item_types is present (may be missing in old prompt format)
+            if "item_types" not in detection:
+                # Map items_detected to item_types based on category
+                detection["item_types"] = self._infer_item_types(detection)
+
+            return detection
+        except Exception as e:
+            logger.error(f"Neuralizer detection failed: {e}")
+            # Fail-closed: treat detection failure as requiring sanitization
+            # Routes will check category=="error" and block the request
+            return {
+                "needs_sanitization": True,
+                "category": "error",
+                "item_types": [],
+                "summary": f"Detection failed: {e}",
+            }
+
+    def _infer_item_types(self, detection: dict) -> list[str]:
+        """Infer item_types from category when not explicitly provided."""
+        category = detection.get("category", "")
+
+        # Map categories to default item types
+        category_defaults = {
+            "pii": ["email", "phone", "name"],
+            "credentials": ["api_key", "secret", "bearer"],
+            "log_file": [
+                "ip",
+                "private_ip",
+                "internal_url",
+                "timestamp",
+                "endpoint",
+                "user",
+            ],
+            "code_secrets": ["api_key", "secret", "path"],
+            "infrastructure": ["ip", "internal_url", "resource_id"],
+        }
+
+        return category_defaults.get(category, [])
+
     async def _execute(self, prompt: str, **kwargs: Any) -> dict:
         """Classify and respond to the prompt.
 
@@ -81,7 +138,7 @@ class Neuralizer(BaseAgent):
                     f"What happened: {explanation}\n\n"
                     f"Raw LLM response:\n{raw_preview}"
                 ),
-                "status": f"❌ Detection failed — see left panel for details.",
+                "status": "❌ Detection failed — see left panel for details.",
                 "detection": {"category": "error"},
             }
 
