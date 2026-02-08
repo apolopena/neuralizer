@@ -13,6 +13,17 @@
 
 ## Done
 <!-- DONE_START -->
+- [x] PI-3: Scrubbing Pipeline with MCP Tools & Error Handling (2026-02-07)
+  - MCP server with scrub_prompt/scrub_log_as_prompt/scrub_log_as_file tools via stdio transport
+  - Tokenizer with span-based replacement (longest match wins for overlaps)
+  - PathSandbox utility for path traversal prevention
+  - MCP client with async subprocess communication, auto-restart, 30s timeout
+  - File upload interception route with MIME validation, detection, scrubbing flow
+  - Chat completions route with detection→scrubbing→publish orchestration
+  - Neuralizer detect() method with item_types inference, fail-closed error handling
+  - Debug trace system (middleware + WebSocket) gated by DEV_MODE
+  - Comprehensive unit tests (tokenizer, patterns, scrubber, path sandbox, MCP client)
+  - Integration tests for Open WebUI schema compatibility
 - [x] PI-2: Header, Scrubbing Mode Toggle & Interception Control (2026-02-06)
   - AppHeader with branded logo, stateful scrubbing pill toggle (confirmation UX), settings gear
   - GSAP-powered mode switching: animated panel resize 50/50 ↔ 0/100

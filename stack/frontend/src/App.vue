@@ -2,13 +2,17 @@
   <div id="app" class="h-screen flex flex-col bg-[var(--color-bg-app)]">
     <AppHeader
       :is-scrubbing="isScrubbing"
+      :dev-mode="devMode"
+      :debug-open="debugOpen"
       @mode-change="handleModeChange"
       @toggle-settings="settingsOpen = !settingsOpen"
+      @toggle-debug="debugOpen = !debugOpen"
     />
     <router-view v-slot="{ Component }">
       <component :is="Component" :is-scrubbing="isScrubbing" />
     </router-view>
     <SettingsDrawer :open="settingsOpen" @close="settingsOpen = false" />
+    <DebugPanel v-if="devMode" :is-open="debugOpen" @close="debugOpen = false" />
   </div>
 </template>
 
@@ -16,11 +20,25 @@
 import { ref, onMounted } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import SettingsDrawer from './components/SettingsDrawer.vue'
+import DebugPanel from './components/DebugPanel.vue'
 
 const isScrubbing = ref(true)
 const settingsOpen = ref(false)
+const devMode = ref(false)
+const debugOpen = ref(false)
 
 onMounted(async () => {
+  try {
+    // Fetch config to check DEV_MODE
+    const configResp = await fetch('/api/config')
+    if (configResp.ok) {
+      const config = await configResp.json()
+      devMode.value = config.dev_mode || false
+    }
+  } catch {
+    // Config endpoint not available
+  }
+
   try {
     await fetch('/v1/mode', {
       method: 'POST',

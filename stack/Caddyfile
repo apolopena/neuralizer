@@ -9,6 +9,11 @@
         reverse_proxy backend:8000
     }
 
+    # Route file uploads through backend for interception
+    handle /api/v1/files* {
+        reverse_proxy backend:8000
+    }
+
     # WebSocket for prompt stream
     handle /ws/* {
         reverse_proxy backend:8000
@@ -26,6 +31,12 @@
 }
 
 # Open WebUI on dedicated port (iframe-friendly, no path conflicts)
-:8082 {
-    reverse_proxy open-webui:8081
+:{$OPENWEBUI_PORT} {
+    # Intercept file uploads on iframe port too (handle = exclusive, no fallthrough)
+    handle /api/v1/files* {
+        reverse_proxy backend:8000
+    }
+    handle {
+        reverse_proxy open-webui:8081
+    }
 }
