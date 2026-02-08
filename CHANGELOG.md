@@ -4,30 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ## [v0.1.1](https://github.com/apolopena/neuralizer/releases/tag/v0.1.1)
 
-### [PR #12](https://github.com/apolopena/neuralizer/pull/12) - OWU Branding & Chrome Customization
+### [PR #12](https://github.com/apolopena/neuralizer/pull/12) - MAINT-2: OWU Branding & Chrome Customization
 
-**Branch:** PI-3_scrubbing-pipeline → main
+**Branch:** ap-dev-working5 → main
 
 **Status:** ✅ Merged
 
-#### OWU Branding & Chrome Customization
+#### MAINT-2: OWU Branding & Chrome Customization
 
 - [[03bb2a6](https://github.com/apolopena/neuralizer/commit/03bb2a6)] **FEAT:** *branding*
   - Graceful OWU loading with health polling and cyan circle loader
-  - Dynamic CSS injection via `/api/owu-styles` endpoint with mode-aware styling
-  - NeurALIzer branding: logo banner at top, N icon replaces assistant profile image in `ChatPanel.vue`
+  - Dynamic CSS injection via `/api/owu-styles` endpoint (mode-aware)
+  - NeurALIzer branding: logo banner at top, N icon replaces assistant profile
   - Model name replacement: "Private LLM" (header), "Local LLM" (messages)
-  - Plus menu customization: only "Upload Plaintext File" and "Attach Webpage" visible
-  - Scrub mode extras: cyan text, hidden sidebar/chrome/note button, PII hint placeholder
+  - Menu customization: only "Upload Plaintext File" and "Attach Webpage"
+  - Scrub mode: cyan text, hidden sidebar/chrome/note button, PII hint
 
 - [[03bb2a6](https://github.com/apolopena/neuralizer/commit/03bb2a6)] **CHORE:** *infrastructure*
-  - Extend `stack.sh` to support multi-service restart/recreate commands
-
----
-
-**System Status:** ✅ OWU branding and chrome customization operational
-**Release Focus:** ✅ Graceful OWU loading with health polling | ✅ Dynamic CSS injection | ✅ NeurALIzer branding | ✅ Scrub mode UI customization | ✅ stack.sh multi-service support
-**Maintenance:** ✅ Mode-aware styling | ✅ Model name replacements | ✅ Plus menu customization
+  - `stack.sh` multi-service restart/recreate support
 
 ---
 
