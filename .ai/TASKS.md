@@ -13,6 +13,11 @@
 
 ## Done
 <!-- DONE_START -->
+- [x] MAINT-2: OWU Branding & Chrome Customization (2026-02-08)
+  - Graceful OWU loading with health polling and cyan circle loader
+  - Dynamic CSS injection via `/api/owu-styles` (mode-aware branding, menu customization)
+  - NeurALIzer branding: logo banner at top, N icon replaces assistant profile
+  - Scrub mode: hide sidebar/chrome/note button, cyan text, PII hint placeholder
 - [x] PI-3: Scrubbing Pipeline with MCP Tools & Error Handling (2026-02-07)
   - MCP server with scrub_prompt/scrub_log_as_prompt/scrub_log_as_file tools via stdio transport
   - Tokenizer with span-based replacement (longest match wins for overlaps)

@@ -1,0 +1,2 @@
+/* Dynamic CSS loaded from backend based on scrubbing mode */
+@import url('/api/owu-styles');

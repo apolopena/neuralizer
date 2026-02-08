@@ -95,6 +95,7 @@ services:
       - OFFLINE_MODE=true
     volumes:
       - openwebui_data:/app/backend/data
+      - ./open-webui-custom.css:/app/build/static/custom.css:ro
     depends_on:
       - backend
     networks:
@@ -109,6 +110,7 @@ services:
       - VITE_OPENWEBUI_PORT=${OPENWEBUI_PORT:-8082}
     volumes:
       - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
       - ./frontend/vite.config.js:/app/vite.config.js:ro
     command: npm run dev
     networks:
