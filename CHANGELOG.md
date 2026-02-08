@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.1.1](https://github.com/apolopena/neuralizer/releases/tag/v0.1.1)
+
+### [PR #12](https://github.com/apolopena/neuralizer/pull/12) - MAINT-2: OWU Branding & Chrome Customization
+
+**Branch:** ap-dev-working5 → main
+
+**Status:** ✅ Merged
+
+#### MAINT-2: OWU Branding & Chrome Customization
+
+- [[03bb2a6](https://github.com/apolopena/neuralizer/commit/03bb2a6)] **FEAT:** *branding*
+  - Graceful OWU loading with health polling and cyan circle loader
+  - Dynamic CSS injection via `/api/owu-styles` endpoint (mode-aware)
+  - NeurALIzer branding: logo banner at top, N icon replaces assistant profile
+  - Model name replacement: "Private LLM" (header), "Local LLM" (messages)
+  - Menu customization: only "Upload Plaintext File" and "Attach Webpage"
+  - Scrub mode: cyan text, hidden sidebar/chrome/note button, PII hint
+
+- [[03bb2a6](https://github.com/apolopena/neuralizer/commit/03bb2a6)] **CHORE:** *infrastructure*
+  - `stack.sh` multi-service restart/recreate support
+
+---
+
 ## [v0.1.0](https://github.com/apolopena/neuralizer/releases/tag/v0.1.0)
 
 ### [PR #11](https://github.com/apolopena/neuralizer/pull/11) - PI-3: MCP Scrubbing Pipeline & Debug Tracing

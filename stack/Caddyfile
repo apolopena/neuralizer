@@ -36,6 +36,29 @@
     handle /api/v1/files* {
         reverse_proxy backend:8000
     }
+    # Replace model profile image with NeurALIzer icon
+    @modelimage path /api/v1/models/model/profile/image*
+    handle @modelimage {
+        rewrite * /neuralizer-icon.svg
+        reverse_proxy frontend:3000
+    }
+    # Dynamic CSS based on scrubbing mode
+    handle /api/owu-styles {
+        reverse_proxy backend:8000
+    }
+    # Serve NeurALIzer assets for OWU customization
+    handle /neuralizer-logo-transparent.png {
+        reverse_proxy frontend:3000
+    }
+    handle /neuralizer-logo.png {
+        reverse_proxy frontend:3000
+    }
+    handle /neuralizer-logo-100h-transparent.png {
+        reverse_proxy frontend:3000
+    }
+    handle /neuralizer-icon.svg {
+        reverse_proxy frontend:3000
+    }
     handle {
         reverse_proxy open-webui:8081
     }

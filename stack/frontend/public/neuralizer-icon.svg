@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="clip">
+      <circle cx="32" cy="32" r="30"/>
+    </clipPath>
+  </defs>
+
+  <!-- base circle -->
+  <circle cx="32" cy="32" r="30" fill="#0B2A44"/>
+
+  <!-- top accent tone -->
+  <g clip-path="url(#clip)">
+    <path d="M-2,-2 L66,-2 L66,22 Q48,34 32,34 Q16,34 -2,22 Z"
+          fill="#18B7FF"/>
+  </g>
+
+  <!-- centered amber N -->
+  <text
+    x="32"
+    y="42"
+    text-anchor="middle"
+    font-family="Montserrat, Poppins, Arial Black, Arial, sans-serif"
+    font-weight="900"
+    font-size="34"
+    fill="#FFB020"
+    stroke="#C47A00"
+    stroke-width="1.5"
+    paint-order="stroke fill">
+    N
+  </text>
+
+  <!-- crisp outer ring -->
+  <circle cx="32" cy="32" r="30" fill="none" stroke="#071A2B" stroke-width="2"/>
+</svg>

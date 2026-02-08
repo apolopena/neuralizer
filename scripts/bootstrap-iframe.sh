@@ -51,9 +51,9 @@ if [ ! -f "$CHATPANEL" ]; then
 fi
 
 # Show current URL (sed is portable; avoids grep -oP which needs GNU grep)
-CURRENT=$(sed -n "s/.*openWebuiUrl = ['\"]\([^'\"]*\)['\"].*/\1/p" "$CHATPANEL" 2>/dev/null)
+CURRENT=$(sed -n "s/.*baseUrl = ['\"]\([^'\"]*\)['\"].*/\1/p" "$CHATPANEL" 2>/dev/null)
 [ -z "$CURRENT" ] && CURRENT="(dynamic — using window.location)"
-echo "Current iframe URL: $CURRENT"
+echo "Current iframe base URL: $CURRENT"
 echo ""
 
 # Interactive mode if no --host
@@ -61,7 +61,7 @@ if [ -z "$HOST" ]; then
     read -rp "Enter server hostname or IP (or 'reset' to restore dynamic URL): " HOST
     if [ "$HOST" = "reset" ]; then
         # Restore dynamic URL
-        sed -i "s|const openWebuiUrl = .*|const openWebuiUrl = \`\${window.location.protocol}//\${window.location.hostname}:\${port}\`|" "$CHATPANEL"
+        sed -i "s|const baseUrl = .*|const baseUrl = \`\${window.location.protocol}//\${window.location.hostname}:\${port}\`|" "$CHATPANEL"
         echo "Restored dynamic iframe URL (uses window.location)"
         exit 0
     fi
@@ -76,7 +76,7 @@ if [ -z "$HOST" ]; then
 fi
 
 URL="${PROTOCOL}://${HOST}:${PORT}"
-sed -i "s|const openWebuiUrl = .*|const openWebuiUrl = '${URL}'|" "$CHATPANEL"
+sed -i "s|const baseUrl = .*|const baseUrl = '${URL}'|" "$CHATPANEL"
 
 echo ""
 echo "Iframe URL set to: $URL"

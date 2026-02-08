@@ -35,11 +35,18 @@ case "$1" in
         echo -e "${GREEN}Stack stopped${NC}"
         ;;
     restart)
-        echo -e "${BLUE}Restarting NeurALIzer stack...${NC}"
-        docker compose down
-        sleep 2
-        docker compose up -d
-        echo -e "${GREEN}Stack restarted${NC}"
+        shift
+        if [ $# -eq 0 ]; then
+            echo -e "${BLUE}Restarting NeurALIzer stack...${NC}"
+            docker compose down
+            sleep 2
+            docker compose up -d
+            echo -e "${GREEN}Stack restarted${NC}"
+        else
+            echo -e "${BLUE}Restarting $*...${NC}"
+            docker compose restart "$@"
+            echo -e "${GREEN}$* restarted${NC}"
+        fi
         ;;
     rebuild)
         SERVICE=${2:-}
@@ -56,15 +63,15 @@ case "$1" in
         fi
         ;;
     recreate)
-        SERVICE=${2:-}
-        if [ -z "$SERVICE" ]; then
+        shift
+        if [ $# -eq 0 ]; then
             echo -e "${BLUE}Recreating NeurALIzer stack...${NC}"
             docker compose up -d --force-recreate
             echo -e "${GREEN}Stack recreated${NC}"
         else
-            echo -e "${BLUE}Recreating $SERVICE...${NC}"
-            docker compose up -d --force-recreate "$SERVICE"
-            echo -e "${GREEN}$SERVICE recreated${NC}"
+            echo -e "${BLUE}Recreating $*...${NC}"
+            docker compose up -d --force-recreate "$@"
+            echo -e "${GREEN}$* recreated${NC}"
         fi
         ;;
     logs)
@@ -90,7 +97,7 @@ case "$1" in
         echo "Commands:"
         echo "  up        Start the stack"
         echo "  down      Stop the stack"
-        echo "  restart   Restart the stack"
+        echo "  restart   Restart the stack (optionally: restart <service>)"
         echo "  rebuild   Rebuild all images and restart (optionally: rebuild <service>)"
         echo "  recreate  Force-recreate containers to reload .env (optionally: recreate <service>)"
         echo "  logs      Show logs (optionally: logs <service>)"

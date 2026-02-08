@@ -6,7 +6,7 @@
     </div>
     <!-- Right pane: Open WebUI chat -->
     <div ref="chatPaneRef" class="min-w-0" style="flex-basis: 50%; flex-grow: 1">
-      <ChatPanel ref="chatPanelRef" />
+      <ChatPanel ref="chatPanelRef" :isScrubbing="isScrubbing" />
     </div>
   </div>
 </template>
